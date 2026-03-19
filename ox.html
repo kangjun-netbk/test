@@ -3,25 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>OX Game (Tic Tac Toe)</title>
     <style>
-        /* Add your styles here */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+        }
+        .cell:hover {
+            background-color: #e0e0e0;
+        }
+        #status {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        #reset-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        #reset-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
-    <div id="game-board">
-        <!-- Your game board goes here -->
-    </div>
+    <h1>OX Game (Tic Tac Toe)</h1>
+    <div id="status">Player O's turn</div>
+    <div id="board"></div>
     <button id="reset-button">Reset Game</button>
 
     <script>
-        // Your game logic here
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'O';
+        const statusDisplay = document.getElementById('status');
+        const boardDisplay = document.getElementById('board');
+        const resetButton = document.getElementById('reset-button');
 
-        document.getElementById('reset-button').addEventListener('click', function() {
-            // Logic to clear the game board and reset the game state
-            document.getElementById('game-board').innerHTML = '';
-            // Additional reset logic if necessary
-        });
+        function createBoard() {
+            boardDisplay.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('button');
+                cell.className = 'cell';
+                cell.id = i;
+                cell.innerText = board[i];
+                cell.onclick = () => handleClick(i);
+                boardDisplay.appendChild(cell);
+            }
+        }
+
+        function handleClick(index) {
+            if (board[index] !== '' || checkWinner()) return;
+
+            board[index] = currentPlayer;
+            createBoard();
+
+            if (checkWinner()) {
+                statusDisplay.innerText = `Player ${currentPlayer} wins!`;
+            } else if (board.every(cell => cell)) {
+                statusDisplay.innerText = 'It\'s a draw!';
+            } else {
+                currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
+                statusDisplay.innerText = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        function checkWinner() {
+            const winningPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            return winningPatterns.some(pattern => {
+                const [a, b, c] = pattern;
+                return board[a] && board[a] === board[b] && board[a] === board[c];
+            });
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'O';
+            statusDisplay.innerText = 'Player O\'s turn';
+            createBoard();
+        }
+
+        resetButton.addEventListener('click', resetGame);
+        createBoard();
     </script>
 </body>
 </html>
