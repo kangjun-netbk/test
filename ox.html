@@ -1,1 +1,83 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Tic Tac Toe</title>\n    <style>\n        body { font-family: Arial, sans-serif; }\n        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; margin: 20px auto; }\n        .cell { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 36px; background-color: #f0f0f0; cursor: pointer; border: 1px solid #ccc; }\n        .cell:hover { background-color: #e0e0e0; }\n    </style>\n</head>\n<body>\n    <h1>Tic Tac Toe</h1>\n    <div class="board" id="board"></div>\n    <button id="restart">Restart</button>\n    <script>\n        const boardElement = document.getElementById('board');\n        const restartButton = document.getElementById('restart');\n        let board = ['', '', '', '', '', '', '', '', ''];\n        let currentPlayer = 'X';\n        let isGameActive = true;\n\n        const winningConditions = [\n            [0, 1, 2], [3, 4, 5], [6, 7, 8],\n            [0, 3, 6], [1, 4, 7], [2, 5, 8],\n            [0, 4, 8], [2, 4, 6]  \n        ];\n\n        function handleCellClick(index) {\n            if (board[index] !== '' || !isGameActive) {\n                return;\n            }\n            board[index] = currentPlayer;\n            renderBoard();\n            checkResult();\n            switchPlayer();\n            if (isGameActive) {\n                computerMove();\n            }\n        }\n\n        function renderBoard() {\n            boardElement.innerHTML = '';\n            board.forEach((cell, index) => {\n                const cellElement = document.createElement('div');\n                cellElement.classList.add('cell');\n                cellElement.textContent = cell;\n                cellElement.addEventListener('click', () => handleCellClick(index));\n                boardElement.appendChild(cellElement);\n            });\n        }\n\n        function checkResult() {\n            for (const condition of winningConditions) {\n                const [a, b, c] = condition;\n                if (board[a] && board[a] === board[b] && board[a] === board[c]) {\n                    isGameActive = false;\n                    setTimeout(() => alert(`Player ${board[a]} wins!`), 100);\n                    return;\n                }\n            }\n            if (!board.includes('')) {\n                isGameActive = false;\n                setTimeout(() => alert('It\u2019s a draw!'), 100);\n            }\n        }\n\n        function switchPlayer() {\n            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';\n        }\n\n        function computerMove() {\n            const availableCells = board.map((cell, index) => cell === '' ? index : null).filter(value => value !== null);\n            if (availableCells.length === 0) return;\n            const randomIndex = Math.floor(Math.random() * availableCells.length);\n            board[availableCells[randomIndex]] = currentPlayer;\n            renderBoard();\n            checkResult();\n            switchPlayer();\n        }\n\n        restartButton.addEventListener('click', () => {\n            board = ['', '', '', '', '', '', '', '', ''];\n            currentPlayer = 'X';\n            isGameActive = true;\n            renderBoard();\n        });\n\n        renderBoard();\n    </script>\n</body>\n</html>\n
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OX Game (Tic Tac Toe)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+        }
+        button {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>OX Game (Tic Tac Toe)</h1>
+    <div id="board"></div>
+    <div id="status">Player O's turn</div>
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'O';
+        const statusDisplay = document.getElementById('status');
+        const boardDisplay = document.getElementById('board');
+
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const button = document.createElement('button');
+                button.id = i;
+                button.innerText = '';
+                button.onclick = () => handleClick(i);
+                boardDisplay.appendChild(button);
+            }
+        }
+
+        function handleClick(index) {
+            if (board[index] !== '' || checkWinner()) return;
+
+            board[index] = currentPlayer;
+            document.getElementById(index).innerText = currentPlayer;
+
+            if (checkWinner()) {
+                statusDisplay.innerText = `Player ${currentPlayer} wins!`;
+            } else if (board.every(cell => cell)) {
+                statusDisplay.innerText = 'It\'s a draw!';
+            } else {
+                currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
+                statusDisplay.innerText = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        function checkWinner() {
+            const winningPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            return winningPatterns.some(pattern => {
+                const [a, b, c] = pattern;
+                return board[a] && board[a] === board[b] && board[a] === board[c];
+            });
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
