@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Digital Clock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .clock {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script>
+        function updateClocks() {
+            const utcDate = new Date();
+            document.getElementById('utc').innerText = 'UTC: ' + utcDate.toISOString().slice(0, 19).replace('T', ' ');
+
+            const estOffset = -5 * 60 * 60 * 1000; // UTC-5
+            const estDate = new Date(utcDate.getTime() + estOffset);
+            document.getElementById('est').innerText = 'EST: ' + estDate.toISOString().slice(0, 19).replace('T', ' ');
+
+            const pstOffset = -8 * 60 * 60 * 1000; // UTC-8
+            const pstDate = new Date(utcDate.getTime() + pstOffset);
+            document.getElementById('pst').innerText = 'PST: ' + pstDate.toISOString().slice(0, 19).replace('T', ' ');
+
+            const istOffset = 5.5 * 60 * 60 * 1000; // UTC+5:30
+            const istDate = new Date(utcDate.getTime() + istOffset);
+            document.getElementById('ist').innerText = 'IST: ' + istDate.toISOString().slice(0, 19).replace('T', ' ');
+        }
+
+        setInterval(updateClocks, 1000);
+    </script>
+</head>
+<body>
+    <h1 class="clock">Digital Clock</h1>
+    <div id="utc" class="clock"></div>
+    <div id="est" class="clock"></div>
+    <div id="pst" class="clock"></div>
+    <div id="ist" class="clock"></div>
+    <script>
+        updateClocks(); // initial call
+    </script>
+</body>
+</html>
